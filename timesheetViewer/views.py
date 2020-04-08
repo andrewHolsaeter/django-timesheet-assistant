@@ -8,9 +8,15 @@ def index(request):
     return render(request, "base.html")
 
 def project_list(request):
-    projects_obj = Projects.objects.all()
-    
+    proj_sub_proj_obj = Projects.objects.raw("""
+        SELECT p.id, p.name, array_agg(sp.description) as descriptions, array_agg(sp.id) as subprojects 
+        FROM projects p
+        LEFT JOIN sub_projects sp ON p.id = sp.project_id
+        GROUP BY p.id
+        ORDER BY p.name;
+        """)
+
     context = {
-        "projects": projects_obj
+        "projects": proj_sub_proj_obj
     }
     return render(request, "projects.html",  context)
