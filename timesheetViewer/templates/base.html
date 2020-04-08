@@ -12,13 +12,15 @@
 
         <title>Timesheet</title>
 
-        <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'timesheetViewer/style.css' %}">
+      
 
     </head>
 
-    <body>
+<body>
+    <h1>Template</h1>
 {% block page_content %}{% endblock %}
-
-    </body>
+</body>
 
 </html
