@@ -12,6 +12,9 @@
 
         <title>Timesheet</title>
 
+        <!-- Google fonts   -->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700&display=swap" rel="stylesheet">
+        
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'timesheetViewer/style.css' %}">
       
@@ -19,8 +22,12 @@
     </head>
 
 <body>
-    <h1>Template</h1>
-{% block page_content %}{% endblock %}
+{% block page_content %}
+<h1>Index</h1>
+<a class="projects" href="projects">
+    <button>Projects</button>
+</a>
+{% endblock %}
 </body>
 
 </html
