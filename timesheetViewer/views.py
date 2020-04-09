@@ -16,7 +16,18 @@ def project_list(request):
         ORDER BY p.name;
         """)
 
+    project_sub_project = {}
+    for r in proj_sub_proj_obj:
+        proj = r.name
+        project_sub_project[proj] = {}
+        j = 0
+        for d in r.descriptions:
+            # Get index
+            project_sub_project[proj][d] = r.id + '-' + r.subprojects[j]
+            j += 1
+
     context = {
-        "projects": proj_sub_proj_obj
+        "projects": proj_sub_proj_obj,
+        "sub_project_ful_ids": project_sub_project
     }
-    return render(request, "projects.html",  context)
+    return render(request, "projects.html", context)

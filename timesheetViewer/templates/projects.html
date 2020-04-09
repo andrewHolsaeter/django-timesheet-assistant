@@ -3,27 +3,18 @@
 {% block page_content %}
 
         <div class="mw6 center pa3 sans-serif">
-
-            <h1 class="mb4">Projects</h1>
-
-            <!-- <header class="b mb2">ID: {{ projects.id }}</header> -->
-
-        {% for p in projects %}
-            <div class="pa2 mb3 striped--near-white">
-
-                <div class="pl2">
-
-                    <p class="mb2">{{p.name}} : {{p.id}}</p>
-                    {% for sp in p.descriptions %}
-                        <p class="subproject">{{sp}}</p> 
-                    {% endfor %}
-
-                </div>
-
-            </div>
-
+            <h1 class="mb4">Projects</h1>   
+        </div>
+        
+        {% for k,v in sub_project_ful_ids.items %}
+        <div class="pl2">
+            <p class="mb2">{{k}}</p>
+            {% for name, id in v.items %}                
+                <p class="subproject"><a href="#" data-tool-tip={{id}}>{{name}}</p></a>
             {% endfor %}
         </div>
+        {% endfor %}
+        
         <a class="back" href="..">
             <button>Back</button>
         </a>
