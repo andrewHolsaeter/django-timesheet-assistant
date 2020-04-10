@@ -20,15 +20,18 @@ def form_redir(request):
 def multiple_forms(request):
     if request.method == 'POST':
         select_form = SelectForm(request.POST)
+        timesheet_form = TimesheetForm(request.POST)
 
-        if select_form.is_valid():
+        if select_form.is_valid() or timesheet_form.is_valid():
             # Do stuff I need
             return HttpResponseRedirect(reverse('form-redirect'))
     else:
         select_form = SelectForm()
+        timesheet_form = TimesheetForm(initial={'date': datetime.today(),'start_at':datetime.now()})
 
     context = {
         'select_form': select_form,
+        'timesheet_form': timesheet_form,
     }
 
     return render(request, 'clock.html', context)
@@ -38,16 +41,22 @@ class MultpleFormsTestView(MultiFormsView):
     template_name = 'clock.html'
     form_classes = {
         'select_form':SelectForm,
+        'timesheet_form':TimesheetForm,
     }
 
     success_urls = {
         'select_form':reverse_lazy('form-redirect'),
+        'timesheet_form':reverse_lazy('timesheet_form'),
     }
 
     def select_form_valid(self, form):
         select = form.cleaned_data.get('select')
         form_name = form.cleaned_data.get('action')
         print(select)
+        return HttpResponseRedirect(self.get_success_url(form_name))
+
+    def timesheet_form_valid(self, form):
+        form_name = form.cleaned_data.get('action')
         return HttpResponseRedirect(self.get_success_url(form_name))
 
 # Create your views here.

@@ -10,6 +10,14 @@
     {{select_form}}
 </form>
 
+<form id='timesheet-form' action="" class="form">
+    {% csrf_token %}
+    <table>
+        {{ timesheet_form.as_table }}
+    </table>
+    <input type="submit" value="Submit"/>
+</form>
+
 <table class="timesheet-data">
     <tr>
         <th>Start</th>
