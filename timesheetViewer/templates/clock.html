@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<a class="back" href="..">
+    <button>Back</button>
+</a>
+
+<form action="{% url 'clock'  %}" method="POST">  
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <input type="submit" value="Submit"/>
+</form>
+<table class="timesheet-data">
+    <tr>
+        <th>Start</th>
+        <th>End</th>
+        <th>Span</th>
+        <th>Date</th>
+    </tr>
+    {% for d in dates %}
+    <tr>
+        <td>{{d.start_at}}</td>
+        <td>{{d.end_at}}</td>
+        <td>{{d.span}}</td>
+        <td>{{d.date}}</td>
+    </tr>
+        
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,11 +1,49 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
 
 from timesheetViewer.models import Projects, SubProjects, TestDates
+from timesheetViewer.forms import TimesheetForm
+
+from datetime import datetime
 
 # Create your views here.
 def index(request):
     return render(request, "base.html")
+
+def clock(request):
+    # Change to selected
+    projects = Projects.objects.all()
+    sub_projects = SubProjects.objects.all()
+
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = TimesheetForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # book_instance.due_back = form.cleaned_data
+            # book_instance.save()
+            data = form.cleaned_data
+            # redirect to a new URL:
+            
+
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = TimesheetForm(initial={'date': datetime.today(),'start_at':datetime.now()})
+    
+
+    dates = TestDates.objects.all()
+    context = {
+        "projects":projects,
+        "subprojects":sub_projects,
+        "form":form,
+        "dates": dates
+    }
+    
+    return render(request, "clock.html", context)
 
 def project_list(request):
     proj_sub_proj_obj = Projects.objects.raw("""
