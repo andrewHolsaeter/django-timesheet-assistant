@@ -14,14 +14,23 @@
 
         <!-- Google fonts   -->
         <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700&display=swap" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+        <!-- <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script> -->
+  {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'timesheetViewer/style.css' %}">        
+        <!-- <script src="{% static 'scripts/main.js' %}"></script> -->
+        {% block scripts %}
         
-        {% load static %}
-        <link rel="stylesheet" type="text/css" href="{% static 'timesheetViewer/style.css' %}">
-      
+        {% endblock %}
+
 
     </head>
 
 <body>
+
 {% block page_content %}
 <h1>Index</h1>
 <a class="projects" href="projects">

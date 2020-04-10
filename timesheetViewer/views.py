@@ -1,19 +1,89 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView
 
-from timesheetViewer.models import Projects, SubProjects, TestDates
-from timesheetViewer.forms import TimesheetForm
+from .models import Projects, SubProjects, TestDates
+from .forms import TimesheetForm, ProjectDropDownForm, SubProjectDropDownForm, SelectForm, SelectSubProjectForm
+from .multiforms import MultiFormsView
 
 from datetime import datetime
+
+def load_sub_projects(request):
+    proj_id = request.GET.get('project_id')
+    sub_projects = SubProjects.objects.filter(project_id=proj_id)
+    return render(request, 'sub_projects.html', {'sub_projects':sub_projects})
+
+def form_redir(request):
+    return render(request, 'pages/form_redirect.html')
+
+def multiple_forms(request):
+    if request.method == 'POST':
+        project_form = ProjectDropDownForm(request.POST)
+        sub_project_form = SubProjectDropDownForm(request.POST)
+        select_form = SelectForm(request.POST)
+
+        if project_form.is_valid() or sub_project_form.is_valid():
+            # Do stuff I need
+            return HttpResponseRedirect(reverse('form-redirect'))
+    else:
+        project_form = ProjectDropDownForm()
+        sub_project_form = SubProjectDropDownForm()
+        select_form = SelectForm()
+
+    context = {
+        'project_form': project_form,
+        'sub_project_form': sub_project_form,
+        'select_form': select_form,
+    }
+
+    return render(request, 'clock.html', context)
+
+
+class MultpleFormsTestView(MultiFormsView):
+    template_name = 'clock.html'
+    form_classes = {
+        'project':ProjectDropDownForm,
+        'sub_project':SubProjectDropDownForm,
+        'select_form':SelectForm,
+    }
+
+    success_urls = {
+        'project':reverse_lazy('form-redirect'),
+        'sub_project':reverse_lazy('form-redirect'),
+        'select_form':reverse_lazy('form-redirect'),
+    }
+
+    def project_form_valid(self, form):
+        select = form.cleaned_data.get('select')
+        form_name = form.cleaned_data.get('action')
+        print(select)
+        return HttpResponseRedirect(self.get_success_url(form_name))
+
+    def sub_project_form_valid(self, form):
+        select = form.cleaned_data.get('select')
+        form_name = form.cleaned_data.get('action')
+        print(select)
+        return HttpResponseRedirect(self.get_success_url(form_name))
+
+    def select_form_valid(self, form):
+        select = form.cleaned_data.get('select')
+        form_name = form.cleaned_data.get('action')
+        print(select)
+        return HttpResponseRedirect(self.get_success_url(form_name))
 
 # Create your views here.
 def index(request):
     return render(request, "base.html")
 
+
 def clock(request):
     # Change to selected
     projects = Projects.objects.all()
     sub_projects = SubProjects.objects.all()
+    # project_form = ProjectDropDownForm()
+    select_form = SelectForm()
+    sub_project_form = SelectSubProjectForm()
 
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -40,6 +110,8 @@ def clock(request):
         "projects":projects,
         "subprojects":sub_projects,
         "form":form,
+        # "project-form": project_form,
+        "sub-project-form": sub_project_form,
         "dates": dates
     }
     
