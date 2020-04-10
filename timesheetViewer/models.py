@@ -144,6 +144,7 @@ class TestDates(models.Model):
     span = models.TimeField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     date = models.DateField(blank=True, null=True)
+    full_project_id = models.CharField(max_length=2, blank=True, null=True)
 
     class Meta:
         managed = True
