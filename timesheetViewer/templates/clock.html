@@ -6,34 +6,9 @@
     <button>Back</button>
 </a>
 
-
 <form id='select-form-form' method="POST" data-sub-projects-url="{% url 'ajax_load_sub_projects' %}">
     {% csrf_token %}
     {{select_form}}
-</form>
-<h1>old</h1>
-
-<form action="" method="POST" id="project-form">
-    {% csrf_token %}
-    <!-- <div class="form-group row"> -->
-        <!-- <label class="col-2 col-form-label" for="information">Student Name</label> -->
-        <!-- <div class="col-10"> -->
-        <table>
-            {{project_form.as_table}}
-        </table>
-        <input type="submit" value="Submit">
-        <!-- </div> -->
-    <!-- </div> -->
-</form>
-{{sub_project_form}}
-
-
-<h1>Oldest</h1>
-<form action="{% url 'clock'  %}" method="POST">{% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <input type="submit" value="Submit"/>
 </form>
 
 <table class="timesheet-data">
@@ -50,8 +25,8 @@
         <td>{{d.span}}</td>
         <td>{{d.date}}</td>
     </tr>
-        
     {% endfor %}
+    
 </table>
 {% endblock %}
 {% load static %}
