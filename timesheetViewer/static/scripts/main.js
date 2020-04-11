@@ -41,3 +41,12 @@ function displayFullId(){
     // Populate the Project ID Input on the timesheet form
     $('#id_full_project_id').val(full_id);
 }
+
+$(document).ready(function(){
+    $('#id_date').datetimepicker({
+        timepicker:false,
+        datepicker:true,
+        format: 'Y-m-d',
+        week: true
+    });
+});
