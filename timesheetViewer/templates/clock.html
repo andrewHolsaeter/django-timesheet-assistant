@@ -18,21 +18,7 @@
     <input type="submit" value="Submit"/>
 </form>
 
-<table class="timesheet-data">
-    <tr>
-        <th>Start</th>
-        <th>End</th>
-        <th>Span</th>
-        <th>Date</th>
-    </tr>
-    {% for d in dates %}
-    <tr>
-        <td>{{d.start_at}}</td>
-        <td>{{d.end_at}}</td>
-        <td>{{d.span}}</td>
-        <td>{{d.date}}</td>
-    </tr>
-    {% endfor %}
+<table id="timesheet-table" class="timesheet-data" data-timesheet-url="{% url 'ajax_load_timesheet' %}">
 
 </table>
 {% endblock %}

@@ -32,6 +32,37 @@ function fillSubProjects(){
     });
 }
 
+function loadTimsheet(){
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+
+    $form=$('#timesheet-table');
+    query = null;
+
+    $.ajax({
+        
+        url: $form.attr('data-timesheet-url'),
+        type : "GET", // http 
+        headers:{
+            "X-CSRFToken": csrftoken
+        },
+        data : { 'query' : query }, // data sent with the post request
+
+        // handle a successful response
+        success : function(data) {
+            console.log("success"); // another sanity check
+            // console.log(data); // log the returned json to the console
+            $form.html(data);
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+}
+
 function displayFullId(){
     // MIGHT NEED TO CHANGE TO AJAX OR ATLEAST ADD A TIMEOUT HERE TO BE SAFE
     var proj_id = $('#select-item-project').val().toString();
@@ -64,4 +95,5 @@ function formatTimesheetForm() {
 
 $(document).ready(function(){
     formatTimesheetForm();
+    loadTimsheet();
 });

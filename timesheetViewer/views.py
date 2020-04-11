@@ -14,6 +14,10 @@ def load_sub_projects(request):
     sub_projects = SubProjects.objects.filter(project_id=proj_id)
     return render(request, 'sub_projects.html', {'sub_projects':sub_projects})
 
+def load_timesheet(request):
+    entries = TestDates.objects.all()
+    return render(request, 'timesheet_entries.html', {'timesheet_entries':entries})
+
 def form_redir(request):
     return render(request, 'pages/form_redirect.html')
 
