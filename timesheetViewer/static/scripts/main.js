@@ -42,11 +42,26 @@ function displayFullId(){
     $('#id_full_project_id').val(full_id);
 }
 
-$(document).ready(function(){
+function formatTimesheetForm() {
+    var time_format = {
+        timepicker:true,
+        datepicker:false,
+        format:'H:i',
+        step: 15
+    };
+
     $('#id_date').datetimepicker({
         timepicker:false,
         datepicker:true,
         format: 'Y-m-d',
         week: true
     });
+
+    $('#id_start_at').datetimepicker(time_format);
+    $('#id_end_at').datetimepicker(time_format);
+};
+
+
+$(document).ready(function(){
+    formatTimesheetForm();
 });
