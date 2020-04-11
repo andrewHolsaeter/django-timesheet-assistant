@@ -27,6 +27,9 @@ class SelectForm(forms.Form):
             (sp.id, sp.description) for sp in SubProjects.objects.filter(project=proj[0].id)]
 
 class TimesheetForm(forms.ModelForm):
+    start_at = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
+    end_at   = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
+
     class Meta:
         model = TestDates
         fields = [
@@ -40,5 +43,4 @@ class TimesheetForm(forms.ModelForm):
             'full_project_id' : _('Project ID'),
             'start_at' : _('Start'),
             'end_at' : _('End')
-
         }
