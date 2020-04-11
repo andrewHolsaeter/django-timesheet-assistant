@@ -95,5 +95,6 @@ function formatTimesheetForm() {
 
 $(document).ready(function(){
     formatTimesheetForm();
+    fillSubProjects();
     loadTimsheet();
 });
