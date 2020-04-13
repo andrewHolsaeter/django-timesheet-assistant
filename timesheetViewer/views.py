@@ -21,8 +21,9 @@ def load_timesheet(request):
 
 def generate_timesheet(request):
     cursor = connection.cursor()
-    year ='2020'
+
     week = request.GET.get('week')
+    year = request.GET.get('year')
     
     # Get weekdays
     cursor.execute(f"""
@@ -41,7 +42,8 @@ def generate_timesheet(request):
     cursor.execute(f"""
     SELECT distinct sub_project_id
     FROM test_dates
-    WHERE to_char(date, 'IW') = '{week}';
+    WHERE to_char(date, 'IW') = '{week}'
+    AND to_char(date, 'YYYY') = '{year}';
     """)
     sub_projects = cursor.fetchall()
 
@@ -60,6 +62,7 @@ def generate_timesheet(request):
     FROM test_dates d
     JOIN sub_projects sp ON d.sub_project_id = sp.index
     WHERE to_char(d.date, 'IW') = '{week}'
+    AND to_char(date, 'YYYY') = '{year}'
     GROUP BY d.date, sp.project_id, sp.index
     ORDER BY d.date, sp.project_id, sp.index;
     """)

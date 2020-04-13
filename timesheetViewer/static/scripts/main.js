@@ -67,7 +67,8 @@ function generateTimesheet(){
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
     $form=$('#generated-timesheet');
-    week = 15;
+    var week = $("#week-input").val();
+    var year = $("#year-input").val();
 
     $.ajax({
         
@@ -76,7 +77,7 @@ function generateTimesheet(){
         headers:{
             "X-CSRFToken": csrftoken
         },
-        data : { 'week' : week }, // data sent with the post request
+        data : { 'week' : week, 'year': year }, // data sent with the post request
 
         // handle a successful response
         success : function(data) {
@@ -123,8 +124,22 @@ function formatTimesheetForm() {
     $('#id_end_at').datetimepicker(time_format);
 };
 
+function addListeners(){
+    // Week input
+    $("#week-input").change(function(e){
+        
+        console.log("Week changed");
+        generateTimesheet();
+    });
+    // Year input
+    $("#year-input").change(function(e){
+        console.log("Year changed");
+        generateTimesheet();
+    });
+};
 
 $(document).ready(function(){
+    addListeners();
     formatTimesheetForm();
     fillSubProjects();
     loadTimsheet();
