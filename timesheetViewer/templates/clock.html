@@ -19,8 +19,12 @@
 </form>
 
 <table id="timesheet-table" class="timesheet-data" data-timesheet-url="{% url 'ajax_load_timesheet' %}">
-
 </table>
+
+<h1>Timesheet</h1>
+<table id="generated-timesheet" class="generated-timesheet" data-url="{% url 'ajax_generate_timesheet' %}">
+</table>
+
 {% endblock %}
 {% load static %}
 {% block scripts %}

@@ -33,14 +33,14 @@ class TimesheetForm(forms.ModelForm):
     class Meta:
         model = TestDates
         fields = [
-            'full_project_id',
+            #'sub_project_index',
             'date',
             'start_at',
             'end_at',
             'span'
         ]
         labels = {
-            'full_project_id' : _('Project ID'),
+            #'sub_project_index' : _('Sub Project Index'),
             'start_at' : _('Start'),
             'end_at' : _('End')
         }

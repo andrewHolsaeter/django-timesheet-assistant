@@ -89,3 +89,97 @@ SELECT extract(epoch from d.end_at - d.start_at)/3600 FROM test_dates d
 WHERE d.start_at IS NOT NULL
 AND d.end_at IS NOT NULL;
 ```
+
+
+Conditional calculation of span
+```
+SELECT *,
+	CASE
+	WHEN d.span IS NOT NULL THEN d.span
+	WHEN d.start_at IS NOT NULL AND d.end_at IS NOT NULL THEN d.end_at - d.start_at
+	ELSE NULL
+	END
+FROM test_dates d
+WHERE to_char(d.date, 'IW') = '15';
+```
+
+
+
+```
+SELECT * FROM generate_series(
+date_trunc('day', to_date('202015', 'iyyyiw')),
+date_trunc('day', to_date('202015', 'iyyyiw') + 6),
+'1 day'
+) AS t
+FULL OUTER JOIN (SELECT d.date, d.sub_project_id,
+  SUM( CASE
+   WHEN d.span IS NOT NULL THEN d.span
+   WHEN d.start_at IS NOT NULL AND d.end_at IS NOT NULL THEN d.end_at - d.start_at
+   ELSE NULL
+  END) AS  hours
+FROM test_dates d
+WHERE to_char(d.date, 'IW') = '15'
+GROUP BY 1, d.sub_project_id) y
+on t = y.date
+;
+```
+
+```
+SELECT days.date, ts.sub_project_id, ts.hours FROM generate_series(
+date_trunc('day', to_date('202015', 'iyyyiw')),
+date_trunc('day', to_date('202015', 'iyyyiw') + 6),
+'1 day'
+) days
+FULL OUTER JOIN 
+(SELECT d.date, d.sub_project_id,
+  SUM( CASE
+   WHEN d.span IS NOT NULL THEN d.span
+   WHEN d.start_at IS NOT NULL AND d.end_at IS NOT NULL THEN d.end_at - d.start_at
+   ELSE NULL
+  END) AS  hours
+FROM test_dates d
+WHERE to_char(d.date, 'IW') = '15'
+GROUP BY 1, d.sub_project_id) ts
+ON days.date = ts.date;
+```
+
+```
+create or replace function sp_test()
+returns void as
+$$
+
+declare cases character varying;
+declare sql_statement text;
+begin
+    drop table if exists temp_series;
+    create temporary  table temp_series as
+    SELECT to_char(generate_series(
+      date_trunc('day', to_date('202015', 'iyyyiw')),
+      date_trunc('day', to_date('202015', 'iyyyiw') + 6),
+      '1 day'),'YYYY-MM-DD') as series;
+
+    select string_agg(concat('max(case when t1.series=','''',series,'''',' then t1.series else ''0000-00-00'' end) as ','"', series,'"'),',') into cases from temp_series;
+
+    drop table if exists temp_data;
+    sql_statement=concat('create temporary table temp_data as select ',cases ,' 
+    from temp_series t1');
+
+    raise notice '%',sql_statement;
+    execute sql_statement;
+end;
+$$
+language 'plpgsql';
+```
+
+```
+SELECT d.date, sp.project_id, sp.index, SUM( CASE
+   WHEN d.span IS NOT NULL THEN d.span
+   WHEN d.start_at IS NOT NULL AND d.end_at IS NOT NULL THEN d.end_at - d.start_at
+   ELSE NULL
+  END) AS hours
+FROM test_dates d
+JOIN sub_projects sp ON d.sub_project_id = sp.index
+WHERE to_char(d.date, 'IW') = '15'
+GROUP BY d.date, sp.project_id, sp.index
+ORDER BY d.date, sp.project_id, sp.index;
+```

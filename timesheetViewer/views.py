@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
+from django.db import connection
 
 from .models import Projects, SubProjects, TestDates
 from .multiforms import MultiFormsView
@@ -17,6 +18,78 @@ def load_sub_projects(request):
 def load_timesheet(request):
     entries = TestDates.objects.all()
     return render(request, 'timesheet_entries.html', {'timesheet_entries':entries})
+
+def generate_timesheet(request):
+    cursor = connection.cursor()
+    year ='2020'
+    week = request.GET.get('week')
+    
+    # Get weekdays
+    cursor.execute(f"""
+        SELECT DATE(day)
+        FROM generate_series(
+            date_trunc('day', to_date('{year}{week}', 'iyyyiw')),
+            date_trunc('day', to_date('{year}{week}', 'iyyyiw') + 6),
+            '1 day') day
+    """)
+    # Get weekdays
+    weekdays = [x[0] for x in cursor.fetchall()]
+    weekday_names = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+
+
+    # Get distinct sub_projects
+    cursor.execute(f"""
+    SELECT distinct sub_project_id
+    FROM test_dates
+    WHERE to_char(date, 'IW') = '{week}';
+    """)
+    sub_projects = cursor.fetchall()
+
+    # Get relevant week's timesheet entries
+    cursor.execute(f"""
+    SELECT 
+        d.date,
+        sp.project_id,
+        sp.index,
+        date_trunc('minute',
+            SUM( CASE
+                WHEN d.span IS NOT NULL THEN d.span
+                WHEN d.start_at IS NOT NULL AND d.end_at IS NOT NULL THEN d.end_at - d.start_at
+                ELSE NULL
+                END)) AS hours
+    FROM test_dates d
+    JOIN sub_projects sp ON d.sub_project_id = sp.index
+    WHERE to_char(d.date, 'IW') = '{week}'
+    GROUP BY d.date, sp.project_id, sp.index
+    ORDER BY d.date, sp.project_id, sp.index;
+    """)
+    hours = cursor.fetchall()
+
+    hours_dict = {}
+    # Fill timesheet sub projects with blank/0 hours
+    for sp in sub_projects:
+        hours_dict[sp[0]] = []
+        
+        for wd in weekdays:
+            hours_dict[sp[0]].append(0)
+
+    # Fill in the blanked timesheet with the actual values
+    # from the rows returned from the main query
+    for entry in hours:
+        date = entry[0]
+        sp = entry[2]
+
+        # Get day of the week index the date corresponds to
+        # i.e. 2020-04-07 is a Wednesday, so indx would be 3
+        indx = weekdays.index(date)
+        hours_dict[sp][indx] = entry[3]
+
+    context = {
+        'weekdays':weekday_names,
+        'hours':hours_dict
+    }
+
+    return render(request, 'generated_timesheet.html', context)
 
 def form_redir(request):
     return render(request, 'pages/form_redirect.html')
