@@ -3,7 +3,7 @@ function fillSubProjects(){
     var selected_proj_id = $('#select-item-project').val();
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
-    $form=$('#select-form-form');
+    var $form=$('#select-form-form');
 
     $.ajax({
         url: $form.attr('data-sub-projects-url'),
@@ -15,7 +15,7 @@ function fillSubProjects(){
 
         // handle a successful response
         success : function(data) {
-            console.log("success"); // another sanity check
+            console.log("success - FillSubProjects"); // another sanity check
             // console.log(data); // log the returned json to the console
             $('#select-item-sub-project').html(data);
 
@@ -35,7 +35,7 @@ function fillSubProjects(){
 function loadTimsheet(){
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
-    $form=$('#timesheet-table');
+    var $form=$('#timesheet-table');
     query = null;
 
     $.ajax({
@@ -49,7 +49,7 @@ function loadTimsheet(){
 
         // handle a successful response
         success : function(data) {
-            console.log("success"); // another sanity check
+            console.log("success - LoadTimesheet"); // another sanity check
             // console.log(data); // log the returned json to the console
             $form.html(data);
         },
@@ -80,7 +80,7 @@ function generateTimesheet(){
 
         // handle a successful response
         success : function(data) {
-            console.log("success"); // another sanity check
+            console.log("success - GenerateTimesheet"); // another sanity check
             // console.log(data); // log the returned json to the console
             $form.html(data);
         },
