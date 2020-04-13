@@ -1,15 +1,20 @@
-<tr>
-    <th>Sub Project Index</th>
-    {% for weekday in weekdays %}
-    <th>{{weekday}}</th>
-    {% endfor %}
-</tr>
+<caption>{{title}}</caption>
+<thead>
+    <tr>
+        <th>Sub Project Index</th>
+        {% for weekday in weekdays %}
+        <th>{{weekday}}</th>
+        {% endfor %}
+    </tr>
+</thead>
 
-{% for sp, days in hours.items %}
-<tr>
-    <td>{{sp}}</td>
-    {% for day in days %}
-    <td>{{day}}</td>
+<tbody>
+    {% for sp, days in hours.items %}
+    <tr>
+        <td>{{sp}}</td>
+        {% for day in days %}
+        <td>{{day}}</td>
+        {% endfor %}
+    </tr>
     {% endfor %}
-</tr>
-{% endfor %}
+</tbody>

@@ -89,7 +89,8 @@ def generate_timesheet(request):
 
     context = {
         'weekdays':weekday_names,
-        'hours':hours_dict
+        'hours':hours_dict,
+        'title': f"{year}-{week}"
     }
 
     return render(request, 'generated_timesheet.html', context)
