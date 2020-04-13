@@ -142,10 +142,11 @@ class TestDates(models.Model):
     start_at = models.TimeField(blank=True, null=True)
     end_at = models.TimeField(blank=True, null=True)
     span = models.TimeField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     date = models.DateField(blank=True, null=True)
-    sub_project = models.ForeignKey(SubProjects, models.DO_NOTHING, blank=True, null=True)
+    sub_project_id = models.ForeignKey(SubProjects, models.DO_NOTHING, db_column="sub_project_id", to_field="index", blank=True, null=True)
 
+    #objects = models.Manager() # Default
     class Meta:
         managed = True
         db_table = 'test_dates'

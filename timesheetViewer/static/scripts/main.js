@@ -39,7 +39,6 @@ function loadTimsheet(){
     query = null;
 
     $.ajax({
-        
         url: $form.attr('data-timesheet-url'),
         type : "GET", // http 
         headers:{
@@ -63,10 +62,56 @@ function loadTimsheet(){
     });
 }
 
+function insert_time_entry(){
+    console.log("Inserting time entry");
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+
+    var $form=$('#timesheet-form');
+    var serialized = $form.serialize();
+    console.log(serialized);
+    var proj = $("#select-item-project").children("option:selected").val()
+    var sub_proj = $("#select-item-sub-project").children("option:selected").val()
+    
+    var $toast=$('#toast');
+    $.ajax({
+        //contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+        url: $form.attr('data-url'),
+        type : "POST", // http 
+        headers:{
+            "X-CSRFToken": csrftoken
+        },
+        data : serialized + "&proj="+proj+"&sub_proj="+sub_proj,
+        
+    //     { the_post: $form.val(),
+    //     proj_id:proj,
+    // sub_proj_id:sub_proj },
+    // data sent with the post request
+
+        // handle a successful response
+        success : function(data) {
+            console.log("success - Insert Entry"); // another sanity check
+            // console.log(data); // log the returned json to the console
+            //$toast.html(data);
+            $toast.toast('show');
+            loadTimsheet();
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            console.log("error - GenerateTimesheet");
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            //$toast.html('');
+            $toast.toast('show');
+        }
+    });
+}
+
 function generateTimesheet(){
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
-    $form=$('#generated-timesheet');
+    var $form=$('#generated-timesheet');
     var week = $("#week-input").val();
     var year = $("#year-input").val();
 
@@ -100,8 +145,9 @@ function displayFullId(){
     var proj_id = $('#select-item-project').val().toString();
     var sub_proj_id = $('#select-item-sub-project').val().toString();
     var full_id = proj_id + '-' + sub_proj_id;
-
+    console.log(full_id);
     // Populate the Project ID Input on the timesheet form
+   // $('#id_sub_project_id').val(sub_proj_id);
     $('#id_full_project_id').val(full_id);
 }
 
@@ -136,6 +182,13 @@ function addListeners(){
         console.log("Year changed");
         generateTimesheet();
     });
+
+    // Submit entry form button
+    $('#timesheet-form').submit(function(e){
+        e.preventDefault();
+        console.log("Submit handler hit");
+        insert_time_entry();
+    })
 };
 
 $(document).ready(function(){

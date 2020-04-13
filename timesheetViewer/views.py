@@ -95,17 +95,60 @@ def generate_timesheet(request):
 
     return render(request, 'generated_timesheet.html', context)
 
-def form_redir(request):
-    return render(request, 'pages/form_redirect.html')
+def insert_time_entry(request):
+    cursor = connection.cursor()
+    data = request.POST.get('post')
+    proj = request.POST.get('proj')
+    sub_proj = request.POST.get('sub_proj')
+
+    cursor.execute(f"""
+    SELECT index
+    FROM sub_projects
+    LEFT JOIN projects ON (project_id = projects.id)
+    WHERE sub_projects.id='{sub_proj}'
+    AND project_id='{proj}';
+    """)
+    indices = cursor.fetchall()
+    if len(indices) != 1:
+        context = {
+            'class':'error',
+            'msg':'Sub project index retrieval did not return a single results'
+        }
+    else:
+        index = indices[0][0]
+        form = TimesheetForm(request.POST)
+        sub_proj_obj = SubProjects.objects.get(pk=index)
+        #form.fields["sub_project_id"] = index
+        
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.sub_project_id = sub_proj_obj
+            entry.save()
+
+            context = {
+                'class':'success',
+                'msg':'Success'
+            }
+        else:
+            context = {
+                'class':'error',
+                'msg':'Problem inserting entry'
+            }
+
+    return render(request, 'toast.html', context)
+
+def form_redirect(request):
+    return render(request, 'toast.html')
 
 def multiple_forms(request):
-    if request.method == 'POST':
+    if False: #request.method == 'POST':
         select_form = SelectForm(request.POST)
         timesheet_form = TimesheetForm(request.POST)
 
         if select_form.is_valid() or timesheet_form.is_valid():
             # Do stuff I need
-            return HttpResponseRedirect(reverse('form-redirect'))
+            return insert_time_entry(request)
+            #return HttpResponseRedirect(reverse('form-redir'))
     else:
         select_form = SelectForm()
         timesheet_form = TimesheetForm(initial={'date': datetime.today(),'start_at':datetime.now()})

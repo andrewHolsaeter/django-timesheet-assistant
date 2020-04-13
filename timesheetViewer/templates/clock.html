@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block page_content %}
+<div id="toast" class="toast"></div>
+
 <a id="back-btn" class="back" href="..">
     <button>Back</button>
 </a>
@@ -10,7 +12,7 @@
     {{select_form}}
 </form>
 
-<form id='timesheet-form' action="" class="form">
+<form id='timesheet-form' class="form" method="POST" data-url="{% url 'ajax_insert_time_entry' %}">
     {% csrf_token %}
     <table>
         {{ timesheet_form.as_table }}
