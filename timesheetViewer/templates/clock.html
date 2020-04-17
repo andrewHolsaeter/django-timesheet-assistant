@@ -8,11 +8,6 @@
     <button>Back</button>
 </a>
 
-<form id='select-form-form' method="POST" data-sub-projects-url="{% url 'ajax_load_sub_projects' %}">
-    {% csrf_token %}
-    {{select_form}}
-</form>
-
 <form id='timesheet-form' class="form" method="POST" data-url="{% url 'ajax_insert_time_entry' %}">
     {% csrf_token %}
     <table>
