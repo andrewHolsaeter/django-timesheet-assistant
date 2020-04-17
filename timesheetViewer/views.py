@@ -5,8 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView
 from django.db import connection
 
 from .models import Projects, SubProjects, Entries
-from .multiforms import MultiFormsView
-from .forms import TimesheetForm, SelectForm
+from .forms import TimesheetForm
 
 from datetime import datetime
 
@@ -148,9 +147,9 @@ def insert_time_entry(request):
 def form_redirect(request):
     return render(request, 'toast.html')
 
-def multiple_forms(request):
+def clock(request):
+    # Check if I need this POST
     if request.method == 'POST':
-        select_form = SelectForm(request.POST)
         timesheet_form = TimesheetForm(request.POST)
 
         if select_form.is_valid() or timesheet_form.is_valid():
@@ -158,38 +157,13 @@ def multiple_forms(request):
             return insert_time_entry(request)
             #return HttpResponseRedirect(reverse('form-redir'))
     else:
-        select_form = SelectForm()
         timesheet_form = TimesheetForm(initial={'day': datetime.today(),'start_at':datetime.now()})
 
     context = {
-        'select_form': select_form,
         'timesheet_form': timesheet_form,
     }
 
     return render(request, 'clock.html', context)
-
-
-class MultpleFormsTestView(MultiFormsView):
-    template_name = 'clock.html'
-    form_classes = {
-        'select_form':SelectForm,
-        'timesheet_form':TimesheetForm,
-    }
-
-    success_urls = {
-        'select_form':reverse_lazy('form-redirect'),
-        'timesheet_form':reverse_lazy('timesheet_form'),
-    }
-
-    def select_form_valid(self, form):
-        select = form.cleaned_data.get('select')
-        form_name = form.cleaned_data.get('action')
-        print(select)
-        return HttpResponseRedirect(self.get_success_url(form_name))
-
-    def timesheet_form_valid(self, form):
-        form_name = form.cleaned_data.get('action')
-        return HttpResponseRedirect(self.get_success_url(form_name))
 
 # Create your views here.
 def index(request):
