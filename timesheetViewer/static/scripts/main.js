@@ -49,7 +49,7 @@ function loadTimsheet(){
         // handle a successful response
         success : function(data) {
             console.log("success - LoadTimesheet"); // another sanity check
-            // console.log(data); // log the returned json to the console
+            //console.log(data); // log the returned json to the console
             $form.html(data);
         },
 
@@ -62,17 +62,52 @@ function loadTimsheet(){
     });
 }
 
+function showToast(toast_class, msg){
+    var $toast = $("#toast")
+    //$toast.html(data);
+    $toast.toast('show');
+    /*
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+    var $toast= $('#toast');
+
+    $.ajax({
+        //contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+        url: $toast.attr('data-url'),
+        type : "POST", // http 
+        headers:{
+            "X-CSRFToken": csrftoken
+        },
+        data : {'class': toast_class, 'msg': msg},
+
+        // handle a successful response
+        success : function(data) {
+            console.log("success - Showing toast"); // another sanity check
+            //console.log(data); // log the returned json to the console
+
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            console.log("error - Showing toast");
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            
+            $toast.toast('show');
+        }
+    });
+    */
+}
 function insert_time_entry(){
     console.log("Inserting time entry");
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
     var $form=$('#timesheet-form');
     var serialized = $form.serialize();
-    console.log(serialized);
+
     var proj = $("#select-item-project").children("option:selected").val()
     var sub_proj = $("#select-item-sub-project").children("option:selected").val()
     
-    var $toast=$('#toast');
     $.ajax({
         //contentType: 'application/x-www-form-urlencoded;charset=utf-8',
         url: $form.attr('data-url'),
@@ -81,19 +116,14 @@ function insert_time_entry(){
             "X-CSRFToken": csrftoken
         },
         data : serialized + "&proj="+proj+"&sub_proj="+sub_proj,
-        
-    //     { the_post: $form.val(),
-    //     proj_id:proj,
-    // sub_proj_id:sub_proj },
-    // data sent with the post request
 
         // handle a successful response
         success : function(data) {
             console.log("success - Insert Entry"); // another sanity check
-            // console.log(data); // log the returned json to the console
-            //$toast.html(data);
-            $toast.toast('show');
-            loadTimsheet();
+            console.log(data); // log the returned json to the console
+           // showToast();
+            showToast(data);
+            loadTimsheet('null','null');
         },
 
         // handle a non-successful response
@@ -102,8 +132,8 @@ function insert_time_entry(){
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            //$toast.html('');
-            $toast.toast('show');
+            //$toast.html('');'
+            showToast('error', "Error inserting entry");
         }
     });
 }
@@ -129,6 +159,7 @@ function generateTimesheet(){
             console.log("success - GenerateTimesheet"); // another sanity check
             // console.log(data); // log the returned json to the console
             $form.html(data);
+            // showToast("success","Generated Timesheet");
         },
 
         // handle a non-successful response
@@ -136,6 +167,7 @@ function generateTimesheet(){
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            showToast("error","Error generating Timesheet");
         }
     });
 }
@@ -159,7 +191,7 @@ function formatTimesheetForm() {
         step: 15
     };
 
-    $('#id_date').datetimepicker({
+    $('#id_day').datetimepicker({
         timepicker:false,
         datepicker:true,
         format: 'Y-m-d',

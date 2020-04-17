@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from timesheetViewer.models import TestDates, Projects, SubProjects
+from timesheetViewer.models import Entries, Projects, SubProjects
 
 class MultipleForm(forms.Form):
     action = forms.CharField(max_length=60, widget=forms.HiddenInput())
@@ -24,7 +24,7 @@ class SelectForm(forms.Form):
         self.fields['project'].choices = (
             (project.id, project.name) for project in proj)
         self.fields['sub_project'].choices = (
-            (sp.id, sp.description) for sp in SubProjects.objects.filter(project=proj[0].id))
+            (sp.index, sp.description) for sp in SubProjects.objects.filter(project=proj[0].id))
 
 class TimesheetForm(forms.ModelForm):
     start_at = forms.TimeField(widget=forms.TimeInput(format='%H:%M'),required=False)
@@ -34,19 +34,19 @@ class TimesheetForm(forms.ModelForm):
     #full_project_id = forms.CharField(max_length=9, label="Project", disabled=True, required=False)
     
     class Meta:
-        model = TestDates
+        model = Entries
         fields = [
-            'sub_project_id',
-            'date',
+            'sub_project_index',
+            'day',
             'start_at',
             'end_at',
             'span'
         ]
         labels = {
-            'sub_project_id' : _('Sub Project'),
+            'sub_project_index' : _('Sub Project'),
             'start_at' : _('Start'),
             'end_at' : _('End'),
         }
     def __init__(self, *args, **kwargs):
         super(TimesheetForm, self).__init__(*args,**kwargs)
-        self.fields['sub_project_id'].widget = forms.HiddenInput()
+        self.fields['sub_project_index'].widget = forms.HiddenInput()

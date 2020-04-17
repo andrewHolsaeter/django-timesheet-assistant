@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast" data-delay=2000 data-url="{% url 'ajax_show_toast' %}">
+</div>
 
 <a id="back-btn" class="back" href="..">
     <button>Back</button>

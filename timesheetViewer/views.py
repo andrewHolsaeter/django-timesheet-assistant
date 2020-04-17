@@ -4,11 +4,19 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
 from django.db import connection
 
-from .models import Projects, SubProjects, TestDates
+from .models import Projects, SubProjects, Entries
 from .multiforms import MultiFormsView
 from .forms import TimesheetForm, SelectForm
 
 from datetime import datetime
+
+def show_toast(request):
+    context = {
+        'class' : request.POST.get("class"),
+        'msg' : request.POST.get("msg")
+    }
+
+    return render(request, 'toast.html', context)
 
 def load_sub_projects(request):
     proj_id = request.GET.get('project_id')
@@ -16,7 +24,7 @@ def load_sub_projects(request):
     return render(request, 'sub_projects.html', {'sub_projects':sub_projects})
 
 def load_timesheet(request):
-    entries = TestDates.objects.all()
+    entries = Entries.objects.all()
     return render(request, 'timesheet_entries.html', {'timesheet_entries':entries})
 
 def generate_timesheet(request):
@@ -40,17 +48,17 @@ def generate_timesheet(request):
 
     # Get distinct sub_projects
     cursor.execute(f"""
-    SELECT distinct sub_project_id
-    FROM test_dates
-    WHERE to_char(date, 'IW') = '{week}'
-    AND to_char(date, 'YYYY') = '{year}';
+    SELECT distinct sub_project_index
+    FROM entries
+    WHERE to_char(day, 'IW') = '{week}'
+    AND to_char(day, 'YYYY') = '{year}';
     """)
     sub_projects = cursor.fetchall()
 
     # Get relevant week's timesheet entries
     cursor.execute(f"""
     SELECT 
-        d.date,
+        d.day,
         sp.project_id,
         sp.index,
         date_trunc('minute',
@@ -59,12 +67,12 @@ def generate_timesheet(request):
                 WHEN d.start_at IS NOT NULL AND d.end_at IS NOT NULL THEN d.end_at - d.start_at
                 ELSE NULL
                 END)) AS hours
-    FROM test_dates d
-    JOIN sub_projects sp ON d.sub_project_id = sp.index
-    WHERE to_char(d.date, 'IW') = '{week}'
-    AND to_char(date, 'YYYY') = '{year}'
-    GROUP BY d.date, sp.project_id, sp.index
-    ORDER BY d.date, sp.project_id, sp.index;
+    FROM entries d
+    JOIN sub_projects sp ON d.sub_project_index= sp.index
+    WHERE to_char(d.day, 'IW') = '{week}'
+    AND to_char(d.day, 'YYYY') = '{year}'
+    GROUP BY d.day, sp.project_id, sp.index
+    ORDER BY d.day, sp.project_id, sp.index;
     """)
     hours = cursor.fetchall()
 
@@ -105,7 +113,7 @@ def insert_time_entry(request):
     SELECT index
     FROM sub_projects
     LEFT JOIN projects ON (project_id = projects.id)
-    WHERE sub_projects.id='{sub_proj}'
+    WHERE sub_projects.index='{sub_proj}'
     AND project_id='{proj}';
     """)
     indices = cursor.fetchall()
@@ -118,11 +126,11 @@ def insert_time_entry(request):
         index = indices[0][0]
         form = TimesheetForm(request.POST)
         sub_proj_obj = SubProjects.objects.get(pk=index)
-        #form.fields["sub_project_id"] = index
+        #form.fields["sub_project_index"] = index
         
         if form.is_valid():
             entry = form.save(commit=False)
-            entry.sub_project_id = sub_proj_obj
+            entry.sub_project_index = sub_proj_obj
             entry.save()
 
             context = {
@@ -141,7 +149,7 @@ def form_redirect(request):
     return render(request, 'toast.html')
 
 def multiple_forms(request):
-    if False: #request.method == 'POST':
+    if request.method == 'POST':
         select_form = SelectForm(request.POST)
         timesheet_form = TimesheetForm(request.POST)
 
@@ -151,7 +159,7 @@ def multiple_forms(request):
             #return HttpResponseRedirect(reverse('form-redir'))
     else:
         select_form = SelectForm()
-        timesheet_form = TimesheetForm(initial={'date': datetime.today(),'start_at':datetime.now()})
+        timesheet_form = TimesheetForm(initial={'day': datetime.today(),'start_at':datetime.now()})
 
     context = {
         'select_form': select_form,
@@ -189,7 +197,7 @@ def index(request):
 
 def project_list(request):
     proj_sub_proj_obj = Projects.objects.raw("""
-        SELECT p.id, p.name, array_agg(sp.description) as descriptions, array_agg(sp.id) as subprojects 
+        SELECT p.id, p.name, array_agg(sp.description) as descriptions, array_agg(sp.sub_project_id) as subprojects 
         FROM projects p
         LEFT JOIN sub_projects sp ON p.id = sp.project_id
         GROUP BY p.id

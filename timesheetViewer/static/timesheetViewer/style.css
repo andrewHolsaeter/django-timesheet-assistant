@@ -30,6 +30,12 @@ button:hover {
     color:inherit;
 }
 
+.toast {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 1rem;
+}
 p.subproject{
     margin-left:2rem;
 }
