@@ -233,7 +233,7 @@ function formatTimesheetForm() {
         timepicker:false,
         datepicker:true,
         format: 'Y-m-d',
-        week: true
+        weeks: true
     });
 
     $('#id_start_at').datetimepicker(time_format);
