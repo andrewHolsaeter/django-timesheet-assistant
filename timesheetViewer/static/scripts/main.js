@@ -233,7 +233,9 @@ function formatTimesheetForm() {
         timepicker:false,
         datepicker:true,
         format: 'Y-m-d',
-        weeks: true
+        dayOfWeekStart:1, // Start on Monday
+        weeks: true,
+        theme:'dark'
     });
 
     $('#id_start_at').datetimepicker(time_format);
