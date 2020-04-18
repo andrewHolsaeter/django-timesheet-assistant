@@ -62,7 +62,7 @@ function loadTimsheet(){
 
 function showToast(toast_class, msg){
     var $toast = $("#toast")
-    //$toast.html(data);
+    $toast.html(data);
     $toast.toast('show');
     /*
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
@@ -121,7 +121,7 @@ function insert_time_entry(){
             console.log(data); // log the returned json to the console
            // showToast();
             showToast(data);
-            loadTimsheet('null','null');
+            loadTimsheet();
         },
 
         // handle a non-successful response
@@ -170,6 +170,46 @@ function generateTimesheet(){
     });
 }
 
+function deleteEntries(url, rows_to_delete){
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();        
+    
+    $.ajax({
+        url: url,
+        type : "POST", // Have to use post
+        headers:{
+            "X-CSRFToken": csrftoken
+        },
+        data : { 'arr':JSON.stringify(rows_to_delete)}, // data sent with the request
+
+        // handle a successful response
+        success : function(data) {
+            console.log("success - Delete"); // another sanity check
+            showToast(data);
+            loadTimsheet();
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            showToast("error","Error deleting entry");
+        }
+    });
+}
+
+function deleteClicked(e) {
+    var url = $(e).attr('data-url');
+    var rows_to_delete = [];
+
+    $('.entries :checkbox:checked').each(function() {
+        // Name of checkbox is the primary key id
+        rows_to_delete.push(this.name);
+    });
+
+    deleteEntries(url, rows_to_delete);
+}
+
 function displayFullId(){
     // MIGHT NEED TO CHANGE TO AJAX OR ATLEAST ADD A TIMEOUT HERE TO BE SAFE
     var proj_id = $('#select-item-project').val().toString();
@@ -200,6 +240,19 @@ function formatTimesheetForm() {
     $('#id_end_at').datetimepicker(time_format);
 };
 
+function addSelectAllHandler(e){
+    // e should be the select-all input checkbox
+    if (e.checked){
+        $('.entries :checkbox').each(function() {            
+            this.checked = true;
+        });
+    } else {        
+        $('.entries :checkbox').each(function() {
+            this.checked = false;
+        });
+    }
+}
+
 function addListeners(){
     // Week input
     $("#week-input").change(function(e){
@@ -225,7 +278,7 @@ function addListeners(){
         e.preventDefault();
         generateTimesheet();
     });
-};
+}
 
 $(document).ready(function(){
     addListeners();

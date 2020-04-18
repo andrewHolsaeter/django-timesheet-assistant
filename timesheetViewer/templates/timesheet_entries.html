@@ -3,12 +3,14 @@
     <th>End</th>
     <th>Span</th>
     <th>Date</th>
+    <th><input type="checkbox" name="all" id="select-all" onclick="addSelectAllHandler(this)"></th>
 </tr>
 {% for d in timesheet_entries %}
-<tr>
+<tr class="entries">
     <td>{{d.start_at}}</td>
     <td>{{d.end_at}}</td>
     <td>{{d.span}}</td>
     <td>{{d.day}}</td>
+    <td><input type="checkbox" name="{{d.id}}"></td>
 </tr>
 {% endfor %}

@@ -7,6 +7,7 @@ from django.db import connection
 from .models import Projects, SubProjects, Entries
 from .forms import TimesheetForm
 
+import json
 from datetime import datetime
 
 def show_toast(request):
@@ -144,6 +145,33 @@ def insert_time_entry(request):
 
     return render(request, 'toast.html', context)
 
+def delete_entries(request):
+    arr = request.POST.get('arr')
+    entries = json.loads(arr)
+    # Have to use post
+    if request.method != 'POST':
+        context = {
+            'class':'error',
+            'msg':'Method was not POST'
+        }
+
+    elif len(entries) < 1:
+        context = {
+            'class':'error',
+            'msg':'Entries length was less than 1'
+        }
+
+    else:
+        # Delete
+        Entries.objects.filter(pk__in=entries).delete()
+        context = {       
+            'class':'succes',
+            'msg':'Succesfully deleted:',
+            'ul': [li for li in entries]
+        }
+
+    return render(request, 'toast.html', context)
+
 def form_redirect(request):
     return render(request, 'toast.html')
 
@@ -152,10 +180,10 @@ def clock(request):
     if request.method == 'POST':
         timesheet_form = TimesheetForm(request.POST)
 
-        if select_form.is_valid() or timesheet_form.is_valid():
-            # Do stuff I need
-            return insert_time_entry(request)
-            #return HttpResponseRedirect(reverse('form-redir'))
+        # if select_form.is_valid() or timesheet_form.is_valid():
+        #     # Do stuff I need
+        #     return insert_time_entry(request)
+        #     #return HttpResponseRedirect(reverse('form-redir'))
     else:
         timesheet_form = TimesheetForm(initial={'day': datetime.today(),'start_at':datetime.now()})
 

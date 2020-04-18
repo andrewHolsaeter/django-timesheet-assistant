@@ -7,4 +7,12 @@
   {% else %}
   No Message
   {% endif %}
+
+  {% if ul %}
+  <ul class="toast__ul">
+    {% for li in ui %}
+    <li class="toast__li">li</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
 </div>
