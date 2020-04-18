@@ -3,10 +3,8 @@ function fillSubProjects(){
     var selected_proj_id = $('#select-item-project').val();
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
-    var $form=$('#select-form-form');
-
     $.ajax({
-        url: $form.attr('data-sub-projects-url'),
+        url: $('#select-item-sub-project').attr('data-url'),
         type : "GET", // http 
         headers:{
             "X-CSRFToken": csrftoken

@@ -1,4 +1,5 @@
 from django import forms
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from timesheetViewer.models import Entries, Projects, SubProjects
 
@@ -12,7 +13,8 @@ class TimesheetForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 'id':'select-item-sub-project',
-                'onchange':'displayFullId()'}))
+                'onchange':'displayFullId()',
+                'data-url': reverse_lazy('ajax_load_sub_projects')}))
     start_at = forms.TimeField(widget=forms.TimeInput(format='%H:%M'),required=False)
     end_at   = forms.TimeField(widget=forms.TimeInput(format='%H:%M'),required=False)
     #sub_project_id = forms.CharField(max_length=2, required=True, disabled=True)
