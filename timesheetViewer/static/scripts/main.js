@@ -218,7 +218,13 @@ function addListeners(){
         e.preventDefault();
         console.log("Submit handler hit");
         insert_time_entry();
-    })
+    });
+
+    // Refresh generated timesheet
+    $('#refresh-generated-timesheet').click(function(e){
+        e.preventDefault();
+        generateTimesheet();
+    });
 };
 
 $(document).ready(function(){
