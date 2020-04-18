@@ -60,9 +60,9 @@ function loadTimsheet(){
     });
 }
 
-function showToast(toast_class, msg){
+function showToast(html){
     var $toast = $("#toast")
-    $toast.html(data);
+    $toast.html(html);
     $toast.toast('show');
     /*
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
@@ -118,8 +118,7 @@ function insert_time_entry(){
         // handle a successful response
         success : function(data) {
             console.log("success - Insert Entry"); // another sanity check
-            console.log(data); // log the returned json to the console
-           // showToast();
+
             showToast(data);
             loadTimsheet();
         },
@@ -131,7 +130,7 @@ function insert_time_entry(){
                 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             //$toast.html('');'
-            showToast('error', "Error inserting entry");
+            //showToast('error', "Error inserting entry");
         }
     });
 }
@@ -165,7 +164,7 @@ function generateTimesheet(){
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            showToast("error","Error generating Timesheet");
+            //showToast("error","Error generating Timesheet");
         }
     });
 }
@@ -184,6 +183,7 @@ function deleteEntries(url, rows_to_delete){
         // handle a successful response
         success : function(data) {
             console.log("success - Delete"); // another sanity check
+
             showToast(data);
             loadTimsheet();
         },
@@ -193,7 +193,7 @@ function deleteEntries(url, rows_to_delete){
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            showToast("error","Error deleting entry");
+            //showToast("error","Error deleting entry");
         }
     });
 }
