@@ -4,10 +4,6 @@
 <div id="toast" class="toast" data-delay=2000 data-url="{% url 'ajax_show_toast' %}">
 </div>
 
-<a id="back-btn" class="back" href="..">
-    <button>Back</button>
-</a>
-
 <form id='timesheet-form' class="form" method="POST" data-url="{% url 'ajax_insert_time_entry' %}">
     {% csrf_token %}
     <table>

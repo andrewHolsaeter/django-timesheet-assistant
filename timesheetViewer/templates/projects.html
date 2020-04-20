@@ -1,22 +1,16 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-        <a class="back" href="..">
-            <button>Back</button>
-        </a>
+    <div class="mw6 center pa3 sans-serif">
+        <h1 class="mb4">Projects</h1>
+    </div>
 
-        <div class="mw6 center pa3 sans-serif">
-            <h1 class="mb4">Projects</h1>   
-        </div>
-
-        {% for k,v in sub_project_ful_ids.items %}
-        <div class="pl2">
-            <p class="mb2">{{k}}</p>
-            {% for name, id in v.items %}                
-                <p class="subproject"><a href="#" data-tool-tip={{id}}>{{name}}</p></a>
-            {% endfor %}
-        </div>
+    {% for k,v in sub_project_ful_ids.items %}
+    <div class="pl2">
+        <p class="mb2">{{k}}</p>
+        {% for name, id in v.items %}
+            <p class="subproject"><a href="#" data-tool-tip={{id}}>{{name}}</p></a>
         {% endfor %}
-        
-
+    </div>
+    {% endfor %}
 {% endblock %}

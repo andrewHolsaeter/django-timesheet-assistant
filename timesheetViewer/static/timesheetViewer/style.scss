@@ -1,4 +1,5 @@
 :root{
+    --clr-main:#55d6aa;
     --clr-primary: rgb(51, 122, 183);
     --clr-off-black: rgb(30,30,30);
     --clr-dark-grey: #333;
@@ -6,6 +7,87 @@
 
 h1 {
     color: var(--clr-primary);
+}
+
+header {
+    display:grid;
+    font-family: 'Work Sans', sans-serif;
+    background-color: var(--clr-main);
+    box-shadow: 0 0 5px 2px rgba(0,0,0,0.15);
+
+    .container {
+        margin:0 auto;
+    }
+
+    h1 {
+        color:inherit;
+        font-size: 1.6rem;
+        font-weight: 200;
+        text-transform: uppercase;
+
+        transition: background-color 200ms ease-in-out;
+    }
+    h1:hover {
+        cursor:pointer;
+        background-color: rgba(0,0,0,0.1);
+    }
+
+    .title {
+        float:left;
+        margin:10px 0;
+        color:var(--clr-dark-grey);
+        padding: 0.5rem 2rem;
+        border: 1px solid var(--clr-dark-grey);
+    }
+}
+
+header::after {
+    content:'';
+    display:table;
+    clear:both;
+}
+
+nav {
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    float:right;
+    height:100%;
+    color:white;
+
+    a {
+        cursor:pointer;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+    a:hover {
+        color:initial;
+        text-decoration: none;
+    }
+    a::after {
+        content:'';
+        display:block;
+        background-color: white;
+        height:5px;
+        width:0;
+        
+        transition: width 150ms ease-in-out;
+    }
+    a:hover::after{
+        width:100%;
+    }
+
+    ul {
+        margin:0;
+        padding:0;
+        list-style: none;
+    }
+    
+    li {
+        display:inline-block;
+        margin-left:70px;
+        margin-top:5px;
+    }
 }
 
 .back {
