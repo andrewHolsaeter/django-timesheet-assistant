@@ -64,38 +64,8 @@ function showToast(html){
     var $toast = $("#toast")
     $toast.html(html);
     $toast.toast('show');
-    /*
-    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-    var $toast= $('#toast');
-
-    $.ajax({
-        //contentType: 'application/x-www-form-urlencoded;charset=utf-8',
-        url: $toast.attr('data-url'),
-        type : "POST", // http 
-        headers:{
-            "X-CSRFToken": csrftoken
-        },
-        data : {'class': toast_class, 'msg': msg},
-
-        // handle a successful response
-        success : function(data) {
-            console.log("success - Showing toast"); // another sanity check
-            //console.log(data); // log the returned json to the console
-
-        },
-
-        // handle a non-successful response
-        error : function(xhr,errmsg,err) {
-            console.log("error - Showing toast");
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            
-            $toast.toast('show');
-        }
-    });
-    */
 }
+
 function insert_time_entry(){
     console.log("Inserting time entry");
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
@@ -221,6 +191,86 @@ function displayFullId(){
     $('#id_full_project_id').val(full_id);
 }
 
+function animateCSS(element, animationName, callback) {
+    const node = document.querySelector(element);
+    node.classList.add('animated', animationName);
+
+    function handleAnimationEnd() {
+        node.classList.remove('animated', animationName);
+        node.removeEventListener('animationend', handleAnimationEnd);
+
+        if (typeof callback === 'function') callback();
+    }
+
+    node.addEventListener('animationend', handleAnimationEnd);
+}
+
+function clearSpan(){
+    var $hour = $('#hour-input');
+    var $minute = $('#minute-input');
+
+    $hour.val('');
+    $minute.val('');
+}
+
+function validateSpanInput(element){
+    var value = element.val().toString();
+    if (value == ""){value="0"};
+    var parsed = /^\d+$/.test(value) ? value : NaN;
+
+    if (isNaN(parsed)){
+        console.log("error");
+        element.addClass("error");
+        
+        return false;
+    }
+    else {
+        element.removeClass("error");
+        return parsed;
+    }
+}
+
+// Parse hours/minutes and assign to spanbox
+function fillTextInput(){
+    var $hours = $('#hour-input');
+    var $minutes = $('#minute-input');
+    
+    var hours = validateSpanInput($hours);
+    var minutes = validateSpanInput($minutes);
+    
+    if (hours === false){
+        $hours.focus();
+        animateCSS('#span-picker', "shake");
+        return;
+    } else if (minutes === false) {
+        $minutes.focus();
+        animateCSS('#span-picker', "shake");
+        return;
+    }
+
+    span = "";
+    // Javascript is weird and "1" > 0 works
+    if (hours > 0){
+        span += hours;
+        if (hours == "1") {
+            span += " hour ";
+        } else {
+            span += " hours ";
+        }
+    }
+    if (minutes > 0) {
+        span += minutes;
+        if (minutes == "1") {
+            span += " minute";
+        } else {
+            span += " minutes";
+        }
+    }
+    
+    $('#id_span').val(span);
+    clearSpan();
+}
+
 function formatTimesheetForm() {
     var time_format = {
         timepicker:true,
@@ -280,6 +330,57 @@ function addListeners(){
         e.preventDefault();
         generateTimesheet();
     });
+
+    /* SPAN PICKER SECTION */
+    // When enter pressed in span picker, focus out, fill spanbox, and clear span entries
+    $('#span-picker').keydown(function(e){
+        if (e.keyCode == 13) {
+            var focused = $(':focus');
+            focused.blur();
+            fillTextInput();
+        }
+    });
+
+    // Defer focus to span picker when spanbox focused
+    $('#id_span').focus(function(e){
+        var $spanbox = $(this);
+        $hour = $('#hour-input');
+        $minute = $('#minute-input');
+
+        var value = $spanbox.val().toString();
+        var value_arr = value.split(' ');
+
+        if (value.search("hour") != -1) {
+            $hour.val(value_arr[0]);
+        }
+        if (value.search("minute") != -1) {
+            if (value.search("hour") == -1){
+                $minute.val(value_arr[0]);
+            } else {
+                $minute.val(value_arr[2]);
+            }
+        }
+
+        $hour.focus();
+        $(this).attr('disabled','true');
+    });
+
+    $('#span-picker').focusout(function(e){
+        if (!$('#span-picker').is(':focus-within')){
+            $('#id_span').attr('disabled',false);
+        }      
+    });
+
+    $('#span-picker input').each(function(){
+        $(this).keyup(function() {
+            validateSpanInput($(this));
+        });
+    });
+    /* END SPAN PICKER SECTION */
+}
+
+function moveSpanPicker(){
+    $('#span-picker').insertAfter($('#id_span'));
 }
 
 $(document).ready(function(){
@@ -288,4 +389,5 @@ $(document).ready(function(){
     fillSubProjects();
     loadTimsheet();
     generateTimesheet();
+    moveSpanPicker();
 });

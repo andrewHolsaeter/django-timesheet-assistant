@@ -1,7 +1,7 @@
 :root{
     --clr-primary: rgb(51, 122, 183);
     --clr-off-black: rgb(30,30,30);
-    --clr-dark-grey: #333;    
+    --clr-dark-grey: #333;
 }
 
 h1 {
@@ -62,4 +62,92 @@ a[data-tool-tip]::after{
 
 a[data-tool-tip]:hover::after{
     transform: scale(1);
+}
+
+#span-picker{
+    animation-duration: 750ms;
+    animation-iteration-count:0.5;
+}
+
+.span-picker {
+    --margin: 0.5rem;
+    --padding:1em;
+    position:absolute;
+    display:flex;
+    margin-top:var(--margin);
+    background-color:var(--clr-dark-grey);
+    border-radius:10px;
+    box-shadow: -5px 5px 25px 0 rgba(0,0,0,.25);
+    padding: var(--padding);
+    opacity:0;
+    scale: 0;
+    
+    transition: opacity 75ms ease-out,
+                scale 75ms ease-out;
+
+    &::before{
+        content:'';
+        position: absolute;
+        width:30px;
+        height:10px;
+        background: var(--clr-dark-grey);
+        clip-path: polygon(50% 0, 0 100%, 100% 100%);
+        transform:translateY(calc(-1em - 0.5rem));
+    }
+    
+    #id_span:hover + &{
+        opacity: 1;
+        scale: 1;
+    }
+    &:focus-within {
+        opacity: 1;
+        scale: 1;
+    }
+
+    &__wrapper {
+        position: relative;
+    }
+    
+    & input{
+        appearance: textfield;
+        color:white;
+        width:4rem;
+        font-weight: 500;
+        font-size:1.25rem;
+        // border-radius:3px;
+        
+        background:  rgba(white,0.1);
+        border-top: 1px solid rgba(white, 0.25);
+        border-bottom: 2px solid rgba(white, 0.25);
+        border-left:none;
+        border-right:none;
+        
+        box-shadow: 0 0 5px -5px rgba(0,0,0,0.5);
+    }
+
+    & input.error {
+        border-bottom: 2px solid rgba(red,0.75);
+    }
+
+    & label {
+        cursor: text;
+        position:absolute;
+        color:white;
+        bottom:0;
+        margin:0;
+        padding:0 0.3rem;   
+        transform: translateX(-100%);
+        margin-bottom: 3px;
+        opacity: 0.75;
+
+        transition: transform 50ms ease-out;
+    }
+
+    & input:focus + label {
+        transform: translateX(-100%)!important;
+    }
+    
+    & input:placeholder-shown + label{
+        transform: translateX(-4rem);
+    }
 }
