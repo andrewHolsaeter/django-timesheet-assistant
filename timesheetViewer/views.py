@@ -199,7 +199,7 @@ def index(request):
 
 def project_list(request):
     proj_sub_proj_obj = Projects.objects.raw("""
-        SELECT p.id, p.name, array_agg(sp.description) as descriptions, array_agg(sp.sub_project_id) as subprojects 
+        SELECT p.id, p.name, array_agg(sp.description) as descriptions, array_agg(sp.activity_number) as subprojects 
         FROM projects p
         LEFT JOIN sub_projects sp ON p.id = sp.project_id
         GROUP BY p.id

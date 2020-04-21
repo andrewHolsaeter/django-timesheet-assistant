@@ -8,6 +8,12 @@
 h1 {
     color: var(--clr-primary);
 }
+h2 {
+    font-size: 1.75rem;
+}
+h3 {
+    font-size: 1.5rem;
+}
 
 header {
     display:grid;
@@ -82,7 +88,6 @@ nav {
         height:100%;
         margin:0;
         padding:0;
-        list-style: none;
     }
     
     li {
@@ -91,6 +96,55 @@ nav {
         margin-left:70px;
         margin-top:5px;
     }
+}
+
+a:hover {
+    color: var(--clr-main);
+}
+
+ul {
+    margin:0;
+    padding:0;
+    list-style: none;
+}
+
+.project-page {
+    .project {
+        &__name {
+            line-height:1.2;
+            font-size: 1.5rem;
+            position:relative;
+            margin-bottom:0;
+        }
+        &__name::before {
+            content: '';
+            position:absolute;
+            top:50%;
+            width:5px;
+            height:1.2rem;
+            left:-1rem;
+            background-color: var(--clr-dark-grey);
+            transform: translateY(-50%);
+        }
+    }
+
+    
+    ul {
+        padding-left: 1rem;
+        font-size: 1.2rem;
+        margin-bottom:0.5rem;
+    }
+    li {
+        font-size:0.8em;
+        a:hover {
+            cursor: default;
+        }
+    }
+}
+
+
+li.subproject {
+    margin-left: 1rem;
 }
 
 .back {
