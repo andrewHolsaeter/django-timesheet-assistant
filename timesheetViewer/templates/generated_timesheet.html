@@ -1,7 +1,7 @@
 <caption>{{title}}</caption>
 <thead>
     <tr>
-        <th>Sub Project Index</th>
+        <th>Project</th>
         {% for weekday in weekdays %}
         <th>{{weekday}}</th>
         {% endfor %}
@@ -13,7 +13,11 @@
     <tr>
         <td>{{sp}}</td>
         {% for day in days %}
-        <td>{{day}}</td>
+            {%if day == 0 %}
+            <td class="{%if day == 0 %} no-hours {% endif %}">-</td>
+            {% else %}
+            <td>{{day|stringformat:".2f"}}</td>
+            {% endif %}
         {% endfor %}
     </tr>
     {% endfor %}

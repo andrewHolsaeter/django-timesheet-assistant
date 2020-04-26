@@ -3,6 +3,7 @@
     --clr-primary: rgb(51, 122, 183);
     --clr-off-black: rgb(30,30,30);
     --clr-dark-grey: #333;
+    --clr-disabled:rgba(0,0,0,0.075);
 }
 
 h1 {
@@ -205,12 +206,29 @@ a[data-tool-tip]:hover::after{
 
 .text-input {
     appearance: textfield;
-    
+
     &.error {
         outline:2px solid red;
     }
 }
 
+#generated-timesheet {
+    td {
+        width: 6rem;
+        border:1px solid rgba(0,0,0,0.5);
+    }
+    td:first-child{
+        width:7rem;
+    }
+    th:not(:first-child),
+    td:not(:first-child){
+        text-align: center;
+        // background-color:green;
+    }
+    td.no-hours{
+        background-color: var(--clr-disabled);
+    }
+}
 #span-picker{
     animation-duration: 750ms;
     animation-iteration-count:0.5;
