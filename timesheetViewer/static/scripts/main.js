@@ -111,7 +111,24 @@ function generateTimesheet(){
     var $form=$('#generated-timesheet');
     var week = $("#week-input").val();
     var year = $("#year-input").val();
+    var current_year = new Date().getFullYear();
 
+    if (week < "0" || week > "52") {
+        // error
+        console.log("error week;")
+        $("#week-input").addClass("error");
+        return;
+    } else {
+        $("#week-input").removeClass("error");
+    }
+    if (year < "2019" || year > current_year.toString()){
+        // error
+        console.log("error year");
+        $("#year-input").addClass("error");
+        return;
+    } else{
+        $("#year-input").removeClass("error");
+    }
     $.ajax({
         
         url: $form.attr('data-url'),
@@ -307,13 +324,13 @@ function addSelectAllHandler(e){
 
 function addListeners(){
     // Week input
-    $("#week-input").change(function(e){
+    $("#week-input").keyup(function(e){
         
         console.log("Week changed");
         generateTimesheet();
     });
     // Year input
-    $("#year-input").change(function(e){
+    $("#year-input").keyup(function(e){
         console.log("Year changed");
         generateTimesheet();
     });

@@ -203,6 +203,14 @@ a[data-tool-tip]:hover::after{
     transform: scale(1);
 }
 
+.text-input {
+    appearance: textfield;
+    
+    &.error {
+        outline:2px solid red;
+    }
+}
+
 #span-picker{
     animation-duration: 750ms;
     animation-iteration-count:0.5;
