@@ -197,6 +197,12 @@ def clock(request):
 def index(request):
     return render(request, "base.html")
 
+def timesheet(request):
+    context={
+        
+    }
+    return render(request, "timesheet.html")
+
 def project_list(request):
     proj_sub_proj_obj = Projects.objects.raw("""
         SELECT p.id, p.name, array_agg(sp.description) as descriptions, array_agg(sp.activity_number) as subprojects 

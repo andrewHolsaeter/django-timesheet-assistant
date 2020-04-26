@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('projects/', views.project_list, name='projects'),
     path('clock/', views.clock, name='clock'),
+    path('timesheet/', views.timesheet, name='timesheet'),
     path('ajax/load_sub_projects/', views.load_sub_projects, name='ajax_load_sub_projects'),
     path('ajax/load_timesheet/', views.load_timesheet, name='ajax_load_timesheet'),
     path('ajax/generate_timesheet/', views.generate_timesheet, name='ajax_generate_timesheet'),

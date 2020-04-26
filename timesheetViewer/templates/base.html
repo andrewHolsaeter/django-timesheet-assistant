@@ -42,22 +42,24 @@
         <nav>
             <ul class="links" style="float:right;">
                 <li><a href="{% url 'clock' %}">Clock</a></li>
-                <li><a href="">Timesheet</a></li>
+                <li><a href="{% url 'timesheet' %}">Timesheet</a></li>
                 <li><a href="{% url 'projects' %}">Projects</a></li>
             </ul>
         </nav>
     </div>
 </header>
 <main>
-    {% block page_content %}
-    <h1>Index</h1>
-    <a class="projects" href="projects">
-        <button>Projects</button>
-    </a>
-    <a class="clock" href="clock">
-        <button>Time Clock</button>
-    </a>
-    {% endblock %}
+    <div class="container">
+        {% block page_content %}
+        <h1>Index</h1>
+        <a class="projects" href="projects">
+            <button>Projects</button>
+        </a>
+        <a class="clock" href="clock">
+            <button>Time Clock</button>
+        </a>
+        {% endblock %}
+    </div>
 </main>
 </body>
 

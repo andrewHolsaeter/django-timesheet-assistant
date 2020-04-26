@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="timesheet page">
+    <h1>Timesheet</h1>
+    <input id="week-input" type="number" class="text-input" 
+    name="week-input" min="1" max="52" value="15">
+    <input id="year-input" type="number" class="text-input" 
+    name="week-input" min="2000" max="3000" value="2020">
+    <button id="refresh-generated-timesheet">Refresh</button>
+    <table id="generated-timesheet" class="generated-timesheet" data-url="{% url 'ajax_generate_timesheet' %}"></table>
+</div>
+{% endblock %}
+
+{% load static %}
+{% block scripts %}
+<script src="{% static 'scripts/main.js' %}"></script>
+{% endblock %}
