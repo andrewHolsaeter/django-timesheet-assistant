@@ -61,39 +61,40 @@ def generate_timesheet(request):
         d.day,
         sp.project_id,
         sp.index,
-        date_trunc('minute',
+        EXTRACT(epoch FROM date_trunc('minute',
             SUM( CASE
                 WHEN d.span IS NOT NULL THEN d.span
                 WHEN d.start_at IS NOT NULL AND d.end_at IS NOT NULL THEN d.end_at - d.start_at
                 ELSE NULL
-                END)) AS hours
+                END)))/3600 AS hours
     FROM entries d
     JOIN sub_projects sp ON d.sub_project_index= sp.index
     WHERE to_char(d.day, 'IW') = '{week}'
     AND to_char(d.day, 'YYYY') = '{year}'
     GROUP BY d.day, sp.project_id, sp.index
-    ORDER BY d.day, sp.project_id, sp.index;
+    ORDER BY sp.project_id, sp.index, d.day;
     """)
     hours = cursor.fetchall()
 
     hours_dict = {}
     # Fill timesheet sub projects with blank/0 hours
-    for sp in sub_projects:
-        hours_dict[sp[0]] = []
-        
+    for sp in hours:
+        proj = sp[1]+"-"+str(sp[2])
+        hours_dict[proj] = []
+
         for wd in weekdays:
-            hours_dict[sp[0]].append(0)
+            hours_dict[proj].append(0)
 
     # Fill in the blanked timesheet with the actual values
     # from the rows returned from the main query
     for entry in hours:
         date = entry[0]
         sp = entry[2]
-
+        proj = entry[1]+"-"+str(entry[2])
         # Get day of the week index the date corresponds to
         # i.e. 2020-04-07 is a Wednesday, so indx would be 3
         indx = weekdays.index(date)
-        hours_dict[sp][indx] = entry[3]
+        hours_dict[proj][indx] = entry[3]
 
     context = {
         'weekdays':weekday_names,
