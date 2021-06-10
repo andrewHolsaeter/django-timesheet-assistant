@@ -2,7 +2,7 @@ asgiref==3.2.7
 astroid==2.3.3
 beautifulsoup4==4.9.0
 colorama==0.4.3
-Django==3.0.5
+Django==3.1.12
 django-livereload-server==0.3.2
 entrypoints==0.3
 flake8==3.7.9
